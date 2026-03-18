@@ -121,11 +121,68 @@
     }
     
   </code>
+
+  Реализация метода getAll()
   
+  <code>
+    
+        public ArrayList<Taxis> getAllTaxis() {
+        ArrayList<Taxis> taxisList = new ArrayList<>();
+        String selectQuery = "SELECT * FROM " + TABLE_NAME;
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor cursor = db.rawQuery(selectQuery, null);
+
+        if (cursor.moveToFirst()) {
+            do {
+                @SuppressLint("Range") int id = cursor.getInt(cursor.getColumnIndex(COLUMN_ID));
+                @SuppressLint("Range") String fio = cursor.getString(cursor.getColumnIndex(COLUMN_NAME));
+                @SuppressLint("Range") String brand_car = cursor.getString(cursor.getColumnIndex(COLUMN_BRAND_CAR));
+                @SuppressLint("Range") int nuber_car = cursor.getInt(cursor.getColumnIndex(COLUMN_NUMBER_CAR));
+                @SuppressLint("Range") float rating = cursor.getFloat(cursor.getColumnIndex(COLUMN_RATING));
+                taxisList.add(new Taxis(id, fio, brand_car, nuber_car, rating));
+            } while (cursor.moveToNext());
+        }
+        cursor.close();
+        db.close();
+        return taxisList;
+    }
+  </code>
+
+  Реализация метода update()
+
+  <code>
+    
+    public int updateTaxis(Taxis taxis) {
+      SQLiteDatabase db = this.getWritableDatabase();
+      ContentValues values = new ContentValues();
+      values.put(COLUMN_NAME, taxis.getFio());
+      values.put(COLUMN_BRAND_CAR, taxis.getBrand_car());
+      values.put(COLUMN_NUMBER_CAR, taxis.getNumber_car());
+      values.put(COLUMN_RATING, taxis.getRating());
+      return db.update(TABLE_NAME, values, COLUMN_ID + " = ?",
+      new String[]{String.valueOf(taxis.getId())});
+    }
+        
+  </code>
+
+  Реализация метода delete()
+
+  <code>
+    
+    public void deleteTaxis(int id) {
+      SQLiteDatabase db = this.getWritableDatabase();
+      db.delete(TABLE_NAME, COLUMN_ID + " = ?",
+              new String[]{String.valueOf(id)});
+      db.close();
+    }
+    
+  </code>
 </div>
 
 <div align="center">
 
+4. Разработать простой интерфейс с возможностью:
+   
 ![Скриншот программы](images/screenshot1.png)
 *Рисунок 1. Общий вид программы / Главное окно*
 
